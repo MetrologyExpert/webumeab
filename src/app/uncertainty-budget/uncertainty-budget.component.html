@@ -1,0 +1,142 @@
+
+<!-- Page content -->
+<div class="basic-container">
+    <mat-card>
+      <!-- Page form start -->
+      <form [formGroup]="uncertaintyBudgetForm" novalidate (ngSubmit)="save(uncertaintyBudgetForm.value, uncertaintyBudgetForm.valid,$event)" >
+      <mat-card-title>Uncertainty Budget</mat-card-title>
+      <mat-card-content>
+          <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="3.5%" fxLayoutAlign="left" >
+            
+            <!-- Description input field -->
+            <mat-form-field class="example-full-width" fxFlex="75%"> 
+              <textarea matInput placeholder="Description" formControlName="description" required></textarea>
+              <!-- input field hint -->
+              <mat-hint align="end">
+                Can contain only characters. Maximum {{uncertaintyBudgetForm.controls.description.value.length}}/600
+              </mat-hint>
+              <!-- input field error -->
+              <mat-error *ngIf="uncertaintyBudgetForm.controls.description.invalid">
+                <span [hidden]="!uncertaintyBudgetForm.controls['description'].errors.required">
+                  This field is required.
+                </span> 
+                <span [hidden]="!uncertaintyBudgetForm.controls['description'].errors.maxlength">
+                  Maximmum alowed characters are 600
+                </span>           
+              </mat-error>
+            </mat-form-field>    
+          </div>
+  
+         <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="3.5%" fxLayoutAlign="center" layout-margin>
+            
+           
+         </div> 
+         <br>
+           <!-- New contribution button -->
+          <mat-divider></mat-divider>
+          <mat-card-actions>
+            <button type="button" mat-raised-button color="primary" (click)="addContribution()">
+              <mat-icon>add box</mat-icon>
+              Add new contribution
+            </button>
+            <button type="button" mat-raised-button color="warn" (click)="clearAllContributions()">
+              <mat-icon>remove_circle</mat-icon>
+              Clear all
+            </button>
+            <button type="button" mat-raised-button color="accent" (click)="addSomeUnitsFromArrayExample()">
+              <mat-icon>add box</mat-icon>
+              Demo contributions
+            </button>
+          </mat-card-actions>
+         <!-- End form units array -->    
+  
+        <!-- Start form units array with first row must and dynamically add more -->
+        <mat-card formArrayName="contributions">
+          <mat-card-title>Contributions</mat-card-title>
+          <mat-divider></mat-divider>
+          
+          <!-- loop throught contributions -->
+          <!--<div  *ngFor="let unit of uncertaintyBudgetForm.controls.contributions.controls; let i=index" >-->
+          <div  *ngFor="let unit of loopContributions; let i=index" >
+
+            
+            <!-- row divider show for every nex row exclude if first row -->
+            <mat-divider *ngIf="loopContributions.length > 1 && i > 0" ></mat-divider><br>
+            
+            <!-- group name in this case row index -->
+            <div [formGroupName]="i">
+              <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="2.5%" fxLayoutAlign="left" >
+                
+                <!-- unit name input field -->
+                <mat-form-field  > 
+                  <input matInput placeholder="Title" formControlName="title" required>  
+                  <!-- input field error -->
+                  <mat-error *ngIf="unit.controls.title.invalid">
+                      Title is required.        
+                  </mat-error>            
+                </mat-form-field>
+  
+                
+                <!-- unit quantity input field -->
+                <mat-form-field   > 
+                  <input matInput placeholder="Error Value" type="number" formControlName="errorValue" required>
+                </mat-form-field>
+  
+                <!-- unit price input field -->
+                <mat-form-field   > 
+                  <input matInput placeholder="Divisor" type="number" formControlName="divisor" required>
+                </mat-form-field>
+                
+                
+                 <!-- unit price input field -->
+                 <div fxLayout.xs="row" > 
+                <mat-form-field  > 
+                  <input matInput placeholder="before Standard Uncertainty" formControlName="standardUncertainty" required>
+                </mat-form-field>
+                 </div>
+  
+  
+                 
+                 <!-- unit price input field -->
+                <mat-form-field   > 
+                  <input matInput placeholder="Sensitivity Coefficient" type="number" formControlName="sc" required>
+                </mat-form-field>
+  
+                <!-- unit total price input field, calculated and not editable -->  
+                <div fxLayout.xs="row" > 
+                <mat-form-field  > 
+                  <input matInput placeholder="after Standard uncertainty" formControlName="stdUnc">
+                </mat-form-field>
+                </div>
+  
+               
+  
+                <!-- row delete button, hidden if there is just one row -->
+                <button type="button" mat-mini-fab color="warn" 
+                        *ngIf="loopContributions.length > 1" (click)="removeContribution(i)">
+                    <mat-icon>delete forever</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </mat-card> <!-- End form contributions array -->    
+  
+        <br>
+        <!-- Total uncertainty calculation formated with angular custom pipe -->
+        <mat-card align="right">
+          <b>Total uncertainty :    {{ totalUncertainty | measurementUnit: 'mm'  }} </b>
+        </mat-card>
+  
+         <mat-card align="right">
+          <b>Expanded uncertainty (p = 0.95) k = 2 :    {{ totalUncertainty*2 | measurementUnit: 'mm'  }} </b>
+        </mat-card>
+  
+      </mat-card-content>
+    
+  
+      <!-- Form submit button enabled on if form is valid -->
+      <mat-card-actions><button mat-raised-button color="primary" [disabled]="uncertaintyBudgetForm.invalid">Submit</button></mat-card-actions>
+      </form> <!-- Page form end -->
+    </mat-card>
+    
+  </div> 
