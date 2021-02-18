@@ -19,7 +19,7 @@ export class InstrumentTableComponent implements AfterViewInit, OnInit {
   displayedColumns = ['id', 'name'];
 
   ngOnInit() {
-    this.dataSource = new InstrumentTableDataSource();
+    // this.dataSource = new InstrumentTableDataSource();
   }
 
   ngAfterViewInit() {
