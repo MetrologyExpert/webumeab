@@ -1,17 +1,14 @@
-import { InstrumentService } from './../instrument.service';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import { Instrument } from '../model/instrument.model';
 
 // TODO: Replace this with your own data model type
 export interface InstrumentTableItem {
   name: string;
   id: number;
 }
-
 
 // TODO: replace this with real data from your application
 const EXAMPLE_DATA: InstrumentTableItem[] = [
@@ -47,12 +44,8 @@ export class InstrumentTableDataSource extends DataSource<InstrumentTableItem> {
   paginator: MatPaginator;
   sort: MatSort;
 
-  instrumentList:Instrument[];
-
-
-  constructor( private InstrumentService:InstrumentService)  {
+  constructor() {
     super();
-    
   }
 
   /**

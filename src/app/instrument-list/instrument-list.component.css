@@ -1,12 +1,24 @@
-.mat-elevation-z8{
-    width: 100%
+.card {
+  min-width: 80%;
 }
 
-.example-card {
-    max-width: 400px;
-  }
-  
-  .example-header-image {
-    /* background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg'); */
-    background-size: cover;
-  }
+.example-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 100%;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}
+
+a {
+  cursor: pointer;
+}
+
+.icon-picture{
+ width: 100px; 
+ height: 100 px;
+}

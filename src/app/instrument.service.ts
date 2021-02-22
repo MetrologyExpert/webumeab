@@ -1,6 +1,7 @@
-import { Observable, of } from 'rxjs';
 import { Instrument } from './model/instrument.model';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { of } from 'rxjs/internal/observable/of';
 
 @Injectable({
   providedIn: 'root'

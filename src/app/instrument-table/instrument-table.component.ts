@@ -5,7 +5,7 @@ import { MatTable } from '@angular/material/table';
 import { InstrumentTableDataSource, InstrumentTableItem } from './instrument-table-datasource';
 
 @Component({
-  selector: 'instrument-table',
+  selector: 'app-instrument-table',
   templateUrl: './instrument-table.component.html',
   styleUrls: ['./instrument-table.component.css']
 })
@@ -19,7 +19,7 @@ export class InstrumentTableComponent implements AfterViewInit, OnInit {
   displayedColumns = ['id', 'name'];
 
   ngOnInit() {
-    // this.dataSource = new InstrumentTableDataSource();
+    this.dataSource = new InstrumentTableDataSource();
   }
 
   ngAfterViewInit() {

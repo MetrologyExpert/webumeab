@@ -2,49 +2,89 @@ import { DataSource } from '@angular/cdk/collections';
 import { InstrumentService } from './../instrument.service';
 import { Component, OnInit } from '@angular/core';
 import { Instrument } from '../model/instrument.model';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-// const ELEMENT_DATA: PeriodicElement[] = [
-//   {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-//   {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-//   {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-//   {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-//   {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-//   {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-//   {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-//   {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-//   {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-//   {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-// ];
+import { Observable } from 'rxjs/internal/Observable';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { merge, of as observableOf } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'instrument-list',
   templateUrl: './instrument-list.component.html',
   styleUrls: ['./instrument-list.component.css']
 })
-export class InstrumentListComponent implements OnInit {
-  
-  displayedColumns: string[] = ['id', 'name', 'description', 'imagePath'];
-  // dataSource = ELEMENT_DATA;
-  dataSource;
-   instrumentList;
+
+export class InstrumentListComponent  {
    
 
   constructor( private instrumentService: InstrumentService) { }
 
-  ngOnInit(): void {
-
-    for(let instrument of this.instrumentList){
-      this.dataSource = new Instrument(instrument.id,instrument.name,instrument.description, instrument.imagePath)
-    }
-     
-   
-    }
+  displayedColumns = ['id', 'name', 'description', 'imagePath', 'edit', 'delete'];
+  dataSource = new PostDataSource(this.instrumentService)
 
 }
+
+export class PostDataSource extends DataSource<any> {
+
+  paginator: MatPaginator;
+  sort: MatSort;
+  
+  constructor(private dataService: InstrumentService) {
+    super();
+  }
+
+
+  data$=this.dataService.getData();
+
+  connect(): Observable<Instrument[]> {
+
+    const dataMutations = 
+      observableOf(this.data$,
+      this.paginator.page,
+      this.sort.sortChange)
+    ;
+
+    return merge(dataMutations).pipe(map(() => {
+      return this.getPagedData(this.getSortedData(this.dataService.ELEMENT_DATA));
+    }));
+
+  } 
+
+  disconnect() {
+  }
+
+  /**
+   * Paginate the data (client-side). If you're using server-side pagination,
+   * this would be replaced by requesting the appropriate data from the server.
+   */
+  private getPagedData(data: Instrument[]) {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    return data.splice(startIndex, this.paginator.pageSize);
+  }
+
+  /**
+   * Sort the data (client-side). If you're using server-side sorting,
+   * this would be replaced by requesting the appropriate data from the server.
+   */
+  private getSortedData(data: Instrument[]) {
+    if (!this.sort.active || this.sort.direction === '') {
+      return data;
+    }
+
+    return data.sort((a, b) => {
+      const isAsc = this.sort.direction === 'asc';
+      switch (this.sort.active) {
+        case 'name': return compare(a.name, b.name, isAsc);
+        case 'id': return compare(+a.id, +b.id, isAsc);
+        default: return 0;
+      }
+    });
+  }
+}
+
+/** Simple sort comparator for example ID/Name columns (for client-side sorting). */
+function compare(a: string | number, b: string | number, isAsc: boolean) {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
+
+
